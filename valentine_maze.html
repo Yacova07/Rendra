@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine Maze Game</title>
+    <style>
+        body { text-align: center; font-family: Arial, sans-serif; background-color: #ffe6e6; }
+        h1 { color: #ff1493; }
+        .love { font-size: 50px; color: red; }
+        canvas { border: 5px solid pink; background-color: #fff0f5; }
+        .hidden { display: none; }
+        .celebration {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(255, 192, 203, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            color: white;
+            animation: fadeIn 2s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <h1>💕 Valentine Maze 💕</h1>
+    <h1>by Rendra</h1>
+    <p class="love">❤️❤️❤️</p>
+    <p>tekan arah untuk menggerakkan karakter</p>
+    <canvas id="mazeCanvas" width="600" height="600"></canvas>
+    <div id="celebration" class="hidden">🎆🎊 Congratulations! You won! 🎊🎆</div>
+    
+    <script>
+        const canvas = document.getElementById("mazeCanvas");
+        const ctx = canvas.getContext("2d");
+        const playerImg = new Image();
+        playerImg.src = "https://cdn-icons-png.flaticon.com/128/833/833472.png";
+        const goalImg = new Image();
+        goalImg.src = "https://cdn-icons-png.flaticon.com/128/1077/1077035.png";
+
+        const maze = [
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+            [1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1],
+            [1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 1],
+            [1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 1],
+            [1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1],
+            [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+        ];
+        
+        const cellSize = 40;
+        let player = { x: 1, y: 1 };
+        let goal = { x: 13, y: 7 };
+        
+        function drawMaze() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let row = 0; row < maze.length; row++) {
+                for (let col = 0; col < maze[row].length; col++) {
+                    ctx.fillStyle = maze[row][col] === 1 ? "#ff69b4" : "white";
+                    ctx.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                    ctx.strokeRect(col * cellSize, row * cellSize, cellSize, cellSize);
+                }
+            }
+            ctx.drawImage(playerImg, player.x * cellSize, player.y * cellSize, cellSize, cellSize);
+            ctx.drawImage(goalImg, goal.x * cellSize, goal.y * cellSize, cellSize, cellSize);
+        }
+        
+        function movePlayer(dx, dy) {
+            let newX = player.x + dx;
+            let newY = player.y + dy;
+            if (maze[newY] && maze[newY][newX] === 0) {
+                player.x = newX;
+                player.y = newY;
+                drawMaze();
+                if (player.x === goal.x && player.y === goal.y) {
+                    document.getElementById("celebration").classList.remove("hidden");
+                }
+            }
+        }
+        
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "ArrowUp") movePlayer(0, -1);
+            if (event.key === "ArrowDown") movePlayer(0, 1);
+            if (event.key === "ArrowLeft") movePlayer(-1, 0);
+            if (event.key === "ArrowRight") movePlayer(1, 0);
+        });
+        
+        playerImg.onload = goalImg.onload = drawMaze;
+    </script>
+</body>
+</html>
